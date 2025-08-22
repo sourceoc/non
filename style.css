@@ -62,7 +62,6 @@ body{
 }
 
 .counter-card::after{
-  /* brilho sutil passando */
   content:"";
   position: absolute; inset: -60%;
   background: conic-gradient(from 0deg at 50% 50%, transparent 0 30%, rgba(255,255,255,0.08) 30% 40%, transparent 40% 100%);

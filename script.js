@@ -1,11 +1,10 @@
-// ========= ajuste o NAMESPACE para algo único seu =========
-// Por exemplo: use seu usuário e o nome do repo do Pages
-const NAMESPACE = "julio-github-io-meu-site"; // mude aqui
+// Contador global: incrementa a cada acesso (toda vez que a página carrega)
 const KEY = "visitas-total";
 
-// Endpoint de contador global gratuito (sem cadastro).
-// Obs: por ser público, terceiros poderiam manipular. Para algo mais sério,
-// considere um backend/serverless com chave secreta.
+// NAMESPACE automático baseado no domínio + caminho do site (evita colisão com outros sites)
+const NAMESPACE = (location.host + location.pathname.replace(/\/index\.html?$/i, "") || "localhost").toLowerCase();
+
+// Endpoint de contador global público
 const ENDPOINT = `https://api.countapi.xyz/hit/${encodeURIComponent(NAMESPACE)}/${encodeURIComponent(KEY)}`;
 
 const elCounter = document.getElementById("counter");
@@ -46,6 +45,7 @@ async function hitGlobalCounter(){
 }
 
 function fallbackLocal(){
+  // Fallback apenas para não ficar 0 quando o serviço externo cair.
   const k = "contador_local_visitas";
   const v = Number(localStorage.getItem(k) || 0) + 1;
   localStorage.setItem(k, String(v));
@@ -54,8 +54,8 @@ function fallbackLocal(){
 
 (async function init(){
   try{
-    const value = await hitGlobalCounter();
-    elStatus.textContent = "contador global ativo";
+    const value = await hitGlobalCounter(); // incrementa +1 a cada acesso
+    elStatus.textContent = `contador global ativo (${NAMESPACE})`;
     animateTo(value);
   } catch (err){
     console.warn("Falhou o contador global, usando local:", err);
